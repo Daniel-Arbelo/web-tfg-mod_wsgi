@@ -1,0 +1,6 @@
+{
+  "name": "reconocimento-imagenes",
+  "description": "Web para presentar la información del reconocimiento de imagenes por dron",
+  "version": "0.0.0",
+  "private": true
+}
