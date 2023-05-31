@@ -81,6 +81,11 @@
               <span class="sr-only">Loading...</span>
             </div>
             <div id="resultado"></div>
+            <button id="myButton2" type="button" class="btn btn-secondary mt-4" onclick="terminarPrograma()">Finalizar Escaneo</button>
+            <div id="loadingCircle2" class="spinner-border m-3 hide d-none" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div id="resultado2"></div>
           </div>
         </div>
         
@@ -115,7 +120,7 @@
         document.getElementById("myButton").classList.add("d-none");
         document.getElementById("loadingCircle").classList.remove("d-none");
         // Realizar una solicitud HTTP POST al servidor local
-        fetch('/test_wsgi', {
+        fetch('/ejecutar_programa', {
           method: 'POST'
         })
         .then(response => response.text())
@@ -158,6 +163,30 @@
         .catch(error => {
           console.error('Error:', error);
         });
+      }
+    </script>
+
+    <!-- Script for stoping the camara detection program-->
+    <script>
+      function terminarPrograma() {
+        // Esconder botón
+        document.getElementById("myButton2").classList.add("d-none");
+        document.getElementById("loadingCircle2").classList.remove("d-none");
+        // Realizar una solicitud HTTP POST al servidor local
+        fetch('/terminar_proceso', {
+          method: 'POST'
+        })
+        .then(response => response.text())
+        .then(data => {
+          // Mostrar la respuesta del servidor en el contenedor de resultado
+          document.getElementById('resultado2').textContent = data;
+          document.getElementById("loadingCircle2").classList.add("d-none");
+          document.getElementById("myButton2").classList.remove("d-none");
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
       }
     </script>
 
