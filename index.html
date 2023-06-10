@@ -76,16 +76,21 @@
           <h2 class="border">Escanear en busca de personas</h2>
           <h4>Comienza a buscar personas con el dron, gracias al programa de reconocimiento de personas.</h4><br>
           <div class="text-center">
+            <!--Begin Start scan-->
             <button id="myButton" type="button" class="btn btn-secondary" onclick="ejecutarPrograma()">Comenzar Escaneo</button>
-            <div id="loadingCircle" class="spinner-border m-3 hide d-none" role="status">
-              <span class="sr-only">Loading...</span>
+            <div class="d-flex justify-content-center">
+              <div id="loadingCircle" class="custom-loader d-none"></div>
             </div>
+            
             <div id="resultado"></div>
+            <!--End Start scan-->
+            <!--Begin finish Scan-->
             <button id="myButton2" type="button" class="btn btn-secondary mt-4" onclick="terminarPrograma()">Finalizar Escaneo</button>
             <div id="loadingCircle2" class="spinner-border m-3 hide d-none" role="status">
               <span class="sr-only">Loading...</span>
             </div>
             <div id="resultado2"></div>
+            <!--End finish Scan-->
           </div>
         </div>
         
@@ -119,6 +124,7 @@
         // Esconder botón
         document.getElementById("myButton").classList.add("d-none");
         document.getElementById("loadingCircle").classList.remove("d-none");
+        document.getElementById('resultado').innerText = "Ejecutando progrma de deteción de personas, esto puede tardar unos minutos hasta que comienze a funcionar";
         // Realizar una solicitud HTTP POST al servidor local
         fetch('/ejecutar_programa', {
           method: 'POST'
@@ -126,7 +132,7 @@
         .then(response => response.text())
         .then(data => {
           // Mostrar la respuesta del servidor en el contenedor de resultado
-          document.getElementById('resultado').textContent = data;
+          document.getElementById("myButton").classList.remove("d-none");
           document.getElementById("loadingCircle").classList.add("d-none");
         })
         .catch(error => {
@@ -179,9 +185,10 @@
         .then(response => response.text())
         .then(data => {
           // Mostrar la respuesta del servidor en el contenedor de resultado
-          document.getElementById('resultado2').textContent = data;
+          document.getElementById('resultado2').innerText = data;
           document.getElementById("loadingCircle2").classList.add("d-none");
           document.getElementById("myButton2").classList.remove("d-none");
+          document.getElementById('resultado').innerText = "";
         })
         .catch(error => {
           console.error('Error:', error);
