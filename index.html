@@ -99,6 +99,29 @@
   </div>
   <!--End Home Page Scan-->
 
+  <!--Begin Home Page Conect to qground control-->
+  <div class="home-page-Scan m-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <h2 class="border"></h2>
+          <div class="text-center">
+            <!--Begin Start scan-->
+            <button id="myButton3" type="button" class="btn btn-secondary" onclick="ejecutarProgramaCoordenadas()">Probar conectividad con la controladora del dron</button>
+            <div class="d-flex justify-content-center">
+              <div id="loadingCircle3" class="custom-loader d-none"></div>
+            </div>
+            <div id="resultado3"></div>
+            <!--End Start scan-->
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <!--End Home Page Conect to qground control-->
+
   <!--Begin Home Page Results-->
   <div class="home-page-Results">
     <div class="container d-flex align-items-center flex-column">
@@ -189,6 +212,31 @@
           document.getElementById("loadingCircle2").classList.add("d-none");
           document.getElementById("myButton2").classList.remove("d-none");
           document.getElementById('resultado').innerText = "";
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+      }
+    </script>
+
+    <!-- Script for executing the coordenadas.py-->
+    <script>
+      function ejecutarProgramaCoordenadas() {
+        // Esconder botón
+        document.getElementById("myButton3").classList.add("d-none");
+        document.getElementById("loadingCircle3").classList.remove("d-none");
+        document.getElementById('resultado3').innerText = "Comprobando conectividad";
+        // Realizar una solicitud HTTP POST al servidor local
+        fetch('/ejecutar_programa_coordenadas', {
+          method: 'POST'
+        })
+        .then(response => response.text())
+        .then(data => {
+          // Mostrar la respuesta del servidor en el contenedor de resultado
+          document.getElementById("myButton3").classList.remove("d-none");
+          document.getElementById("loadingCircle3").classList.add("d-none");
+          document.getElementById('resultado3').innerText = data;
         })
         .catch(error => {
           console.error('Error:', error);

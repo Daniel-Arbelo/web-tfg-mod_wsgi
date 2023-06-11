@@ -1,8 +1,5 @@
-from pymavlink import mavutil
+import time
 
-connection = mavutil.mavlink_connection('udp:localhost:14550')
 
-connection.wait_heartbeat()
-print('connection success!')
-
-    
+print("connection success!")
+   
