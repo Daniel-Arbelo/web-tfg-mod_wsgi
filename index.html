@@ -182,11 +182,27 @@
         .then(response => response.text())
         .then(data => {
           for (var i = 0; i < JSON.parse(data).numero_archivos; i++) {
+            // Crear un contenedor para la imagen  sus coordenadas
+            var imagenCoordenadasContainer = document.createElement("div");
+            imagenCoordenadasContainer.className = "imagen-coordenadas-container";
+            
+            // Crear la imagen
             var imageSrc = folderPath + i + ".jpg";
             var imageElement = document.createElement("img");
+            imageElement.className = "img-fluid"; // Clase de Bootstrap para columnas
             imageElement.src = imageSrc;
-            imageElement.className = "col-4 mt-4"; // Clase de Bootstrap para columnas
-            imageContainer.appendChild(imageElement);
+            // Crear las coordenadas
+            var coordenadasElement = document.createElement("div");
+            coordenadasElement.innerText = "Coordenadas: "; // Obtener las coordenadas correspondientes
+
+            // Añadir la imagen y sus coordenadas al div
+            imagenCoordenadasContainer.appendChild(imageElement);
+            imagenCoordenadasContainer.appendChild(coordenadasElement);
+            imagenCoordenadasContainer.className = "col-12 col-md-4 mt-4";
+            //imagenCoordenadasContainer.className = "col-4 mt-4"; // Clase de Bootstrap para columnas
+
+
+            imageContainer.appendChild(imagenCoordenadasContainer);
           }
         })
         .catch(error => {
