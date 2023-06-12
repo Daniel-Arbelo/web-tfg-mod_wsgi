@@ -167,6 +167,9 @@
     
     <!--Script for uploading images dynamically-->
     <script>
+      function generateMapLink(latitud, longitud) {
+        return "https://www.google.com/maps/search/?api=1&query=" + latitud + "," + longitud;
+      }
       function loadImages() {
         var imageContainer = document.getElementById("image-container");
         imageContainer.innerHTML = ""; // Limpiar el contenedor de imágenes
@@ -181,29 +184,46 @@
         })
         .then(response => response.text())
         .then(data => {
-          for (var i = 0; i < JSON.parse(data).numero_archivos; i++) {
-            // Crear un contenedor para la imagen  sus coordenadas
-            var imagenCoordenadasContainer = document.createElement("div");
-            imagenCoordenadasContainer.className = "imagen-coordenadas-container";
-            
-            // Crear la imagen
-            var imageSrc = folderPath + i + ".jpg";
-            var imageElement = document.createElement("img");
-            imageElement.className = "img-fluid"; // Clase de Bootstrap para columnas
-            imageElement.src = imageSrc;
-            // Crear las coordenadas
-            var coordenadasElement = document.createElement("div");
-            coordenadasElement.innerText = "Coordenadas: "; // Obtener las coordenadas correspondientes
 
-            // Añadir la imagen y sus coordenadas al div
-            imagenCoordenadasContainer.appendChild(imageElement);
-            imagenCoordenadasContainer.appendChild(coordenadasElement);
-            imagenCoordenadasContainer.className = "col-12 col-md-4 mt-4";
-            //imagenCoordenadasContainer.className = "col-4 mt-4"; // Clase de Bootstrap para columnas
+          // Cargar información de coordenadas desde el archivo de texto
+          fetch('/coordenadas.txt') // Reemplaza 'coordenadas.txt' con el nombre de tu archivo de texto
+          .then(response => response.text())
+          .then(coordenadasData => {
 
+            var coordenadas = coordenadasData.split('\n'); // Separar las líneas del archivo de texto
 
-            imageContainer.appendChild(imagenCoordenadasContainer);
-          }
+            for (var i = 0; i < JSON.parse(data).numero_archivos; i++) {
+              // Crear un contenedor para la imagen  sus coordenadas
+              var imagenCoordenadasContainer = document.createElement("div");
+              imagenCoordenadasContainer.className = "imagen-coordenadas-container";
+              
+              // Crear la imagen
+              var imageSrc = folderPath + i + ".jpg";
+              var imageElement = document.createElement("img");
+              imageElement.className = "img-fluid"; // Clase de Bootstrap para columnas
+              imageElement.src = imageSrc;
+
+              // Crear el enlace a Google Maps
+              var [latitud, longitud] = coordenadas[i].split(","); // Separar latitud y longitud
+              var mapLink = generateMapLink(latitud, longitud);
+
+              var mapLinkElement = document.createElement("a");
+              mapLinkElement.href = mapLink;
+              mapLinkElement.target = "_blank"; // Abre el enlace en una nueva pestaña
+              mapLinkElement.appendChild(imageElement);
+
+              // Crear las coordenadas
+              var coordenadasElement = document.createElement("div");
+              coordenadasElement.innerText = "Coordenadas: " + coordenadas[i]; // Obtener las coordenadas correspondientes
+
+              // Añadir la imagen y sus coordenadas al div
+              imagenCoordenadasContainer.appendChild(mapLinkElement);
+              imagenCoordenadasContainer.appendChild(coordenadasElement);
+              imagenCoordenadasContainer.className = "col-12 col-md-4 mt-4"; // Clase de Bootstrap para columnas 3 en formato grande y para movil 1
+
+              imageContainer.appendChild(imagenCoordenadasContainer);
+            }
+          })
         })
         .catch(error => {
           console.error('Error:', error);
