@@ -11,6 +11,8 @@ output = videoOutput("/var/www/html/imagenesPasadasPrograma/") #Ruta donde se le
 # Limpiar captura anterior
 programa = 'rm /var/www/html/imagenesPasadasPrograma/*'
 os.popen(programa).read()
+with open('/var/www/html/coordenadas.txt', "w") as archivo:
+        archivo.write("")  # Sobrescribe el contenido con una cadena vacia
 
 while True:
     img = camera.Capture()
@@ -27,11 +29,14 @@ while True:
                 print("persona detectada")
                 # render the image
                 output.Render(img)
+                # coordenadas
+                with open('/var/www/html/coordenadas.txt', "a") as archivo:
+                    archivo.write("28.411575, -16.543568\n")  # Escribir a continuacion en el archivo
 
     print("------------------------")
     #display.Render(img)
     #display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-    time.sleep(2) #Esperar 2 segundos
+    time.sleep(1) #Esperar 1 segundos
     #key = sys.stdin.read(1)
     #if key == "q":
     #    break
