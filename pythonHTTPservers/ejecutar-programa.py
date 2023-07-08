@@ -4,7 +4,7 @@ import os
 def application(environ,start_response): 
     # Execute the comman
     #programa = 'echo \'Z7ZhekVI\' | sudo -S -u daniel python /var/www/html/detectnet-console.py /home/daniel/jetson-inference/build/aarch64/bin/images/peds_0.jpg /var/www/html/imagenesPasadasPrograma/output0.jpg'
-    programa = 'echo \'Z7ZhekVI\' | sudo -S -u daniel python2 /var/www/html/camara-detection.py'
+    programa = 'echo \'Z7ZhekVI\' | sudo -S -u daniel python3.7 /var/www/html/camara-detection.py'
     
     # Ejecutar el programa externo y capturar la salida
     output = os.popen(programa).read()

@@ -28,3 +28,4 @@ while display.IsStreaming():
     #if len(pid) > 5:
     #        programa = 'echo \'Z7ZhekVI\' | sudo -S -u daniel kill ' + pid
     #        os.popen(programa).read()
+

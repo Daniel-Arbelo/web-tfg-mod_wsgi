@@ -3,6 +3,10 @@ from jetson_utils import videoSource, videoOutput
 import sys
 import time
 import os
+import asyncio
+from mavsdk import System
+from mavsdk.action import OrbitYawBehavior
+
 
 net = detectNet("ssd-mobilenet-v2", threshold=0.5)
 camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
@@ -13,6 +17,8 @@ programa = 'rm /var/www/html/imagenesPasadasPrograma/*'
 os.popen(programa).read()
 with open('/var/www/html/coordenadas.txt', "w") as archivo:
         archivo.write("")  # Sobrescribe el contenido con una cadena vacia
+
+#conectarse al dron
 
 while True:
     img = camera.Capture()
