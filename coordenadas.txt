@@ -1,5 +1,5 @@
 28.411575, -16.543568
 28.411575, -16.543568
-28.411575, -16.543568
-28.411575, -16.543568
-28.411575, -16.543568
+No se pudo conectar con el dron
+No se pudo conectar con el dron
+No se pudo acceder al gps
