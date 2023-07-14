@@ -83,6 +83,17 @@ async def get_drone_coordinates():
     file_path = "coordenadas.txt"  # Ruta del archivo
     with open(file_path, "a") as file:
         file.write(location_str + "\n")
+            
+    yaw_behavior = OrbitYawBehavior.HOLD_FRONT_TO_CIRCLE_CENTER
+
+
+    print('Do orbit at 10m height from the ground')
+    await drone.action.do_orbit(radius_m=10,
+                                velocity_ms=2,
+                                yaw_behavior=yaw_behavior,
+                                latitude_deg=position.latitude_deg,
+                                longitude_deg=position.longitude_deg,
+                                absolute_altitude_m=orbit_height)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
