@@ -3,6 +3,10 @@ from jetson_utils import videoSource, videoOutput
 import sys
 import time
 import os
+import asyncio
+from mavsdk import System
+from mavsdk.action import OrbitYawBehavior
+
 
 net = detectNet("ssd-mobilenet-v2", threshold=0.5)
 camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
@@ -14,29 +18,73 @@ os.popen(programa).read()
 with open('/var/www/html/coordenadas.txt', "w") as archivo:
         archivo.write("")  # Sobrescribe el contenido con una cadena vacia
 
-while True:
-    img = camera.Capture()
+async def detect_people():
+    while True:
+        img = camera.Capture()
 
-    if img is None: # capture timeout
-        continue
+        if img is None: # capture timeout
+            continue
 
-    detections = net.Detect(img)
-    if detections:
-        for info in detections:
-            #if detections[i].ClassID == 1:
-            print(info.ClassID)
-            if info.ClassID == 1:
-                print("persona detectada")
-                # render the image
-                output.Render(img)
-                # coordenadas
-                with open('/var/www/html/coordenadas.txt', "a") as archivo:
-                    archivo.write("28.411575, -16.543568\n")  # Escribir a continuacion en el archivo
+        detections = net.Detect(img)
+        if detections:
+            for info in detections:
+                if info.ClassID == 1:
+                    print("persona detectada")
+                    # render the image
+                    output.Render(img)
+                    # coordenadas
+                    start_time = time.time()
+                    await get_drone_coordinates()
+                    elapsed_time = time.time() - start_time
+                    print(f"Tiempo transcurrido: {elapsed_time} segundos")
 
-    print("------------------------")
-    #display.Render(img)
-    #display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-    time.sleep(1) #Esperar 1 segundos
-    #key = sys.stdin.read(1)
-    #if key == "q":
-    #    break
+        print("------------------------")
+        time.sleep(1)
+
+async def get_drone_coordinates():
+    drone = System()
+
+    try:
+        await asyncio.wait_for(drone.connect(system_address='serial:///dev/ttyTHS1:57600'), timeout=1)
+    except asyncio.TimeoutError:
+        print("Error: No se pudo conectar al dron dentro del tiempo especificado")
+        file_path = "coordenadas.txt"  # Ruta del archivo
+        with open(file_path, "a") as file:
+            file.write("No se pudo conectar con el dron\n")
+        return
+
+    print("Waiting for drone to connect...")
+    async for state in drone.core.connection_state():
+        if state.is_connected:
+            print("Drone discovered!")
+            break
+
+    print("Waiting for drone to have a global position estimate...")
+    async for health in drone.telemetry.health():
+        if health.is_global_position_ok and health.is_home_position_ok:
+            print("-- Global position estimate OK")
+            break
+        else:
+            file_path = "coordenadas.txt"  # Ruta del archivo
+            with open(file_path, "a") as file:
+                file.write("No se pudo acceder al gps\n")
+            return
+
+    async for position in drone.telemetry.position():
+        orbit_height = position.absolute_altitude_m + 10
+        break
+
+    latitude = position.latitude_deg
+    longitude = position.longitude_deg
+    location_str = f"{latitude}, {longitude}"
+
+    print(f"Ubicación: Latitud={latitude}, Longitud={longitude}")
+
+    file_path = "coordenadas.txt"  # Ruta del archivo
+    with open(file_path, "a") as file:
+        file.write(location_str + "\n")
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    tasks = [loop.create_task(detect_people()), loop.create_task(get_drone_coordinates())]
+    loop.run_until_complete(asyncio.wait(tasks))
